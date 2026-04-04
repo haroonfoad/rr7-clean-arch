@@ -1,19 +1,26 @@
-import Database from "better-sqlite3";
-import {
-  drizzle,
-  type BetterSQLite3Database,
-} from "drizzle-orm/better-sqlite3";
+import "dotenv/config";
+import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 
 import * as schema from "./schema";
 
-type AuthDb = BetterSQLite3Database<typeof schema>;
+type AuthDb = NodePgDatabase<typeof schema>;
 
 let db: AuthDb | undefined;
 
+function getDatabaseUrl(): string {
+  const url = process.env.DATABASE_URL;
+  if (!url) {
+    throw new Error("DATABASE_URL is required to connect to PostgreSQL.");
+  }
+
+  return url;
+}
+
 export function getAuthDb(): AuthDb {
   if (!db) {
-    const sqlite = new Database("organization.db");
-    db = drizzle(sqlite, { schema });
+    const pool = new Pool({ connectionString: getDatabaseUrl() });
+    db = drizzle(pool, { schema });
   }
 
   return db;

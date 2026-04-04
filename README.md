@@ -13,13 +13,19 @@ Stack used:
 - React Router v7 (SSR)
 - PrimeReact + PrimeIcons
 - Tailwind CSS v4
-- Drizzle ORM + SQLite (`better-sqlite3`)
+- Drizzle ORM + PostgreSQL (`pg`)
 
 ## Run the app
 
 ```bash
 npm install
 npm run dev
+```
+
+Add `.env` with your DB connection string:
+
+```bash
+DATABASE_URL="postgresql://postgres:postgres@localhost/clean_delta"
 ```
 
 Open `http://localhost:5173` and navigate to `/organizations`.
@@ -48,9 +54,7 @@ npm run db:migrate
 npm run db:seed
 ```
 
-`organization.db` is created automatically when migrations run.
-
-The `organizations`, `departments`, and `users` tables are managed through Drizzle migration files.
+The `organizations`, `departments`, and `users` tables are managed in PostgreSQL through Drizzle migration files.
 
 Migrations are generated from module schemas under `app/modules/**/infrastructure/db/schema.ts` into the `drizzle/` folder.
 

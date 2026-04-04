@@ -1,12 +1,12 @@
 import { and, asc, eq, ne, sql } from "drizzle-orm";
+import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 
 import type { Organization } from "../../domain/entities/organization";
 import type { OrganizationRepository } from "../../domain/repositories/organization-repository";
-import type { BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
 import * as schema from "../db/schema";
 
 export class DrizzleOrganizationRepository implements OrganizationRepository {
-  constructor(private readonly db: BetterSQLite3Database<typeof schema>) {}
+  constructor(private readonly db: NodePgDatabase<typeof schema>) {}
 
   async list(): Promise<Organization[]> {
     return this.db
