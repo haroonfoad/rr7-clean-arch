@@ -50,7 +50,12 @@ export function OrganizationsPage({ organizations }: OrganizationsPageProps) {
   const actionsBodyTemplate = (organization: OrganizationRow) => (
     <div className="flex gap-2 justify-end">
       <Link to={`${organization.id}/edit`}>
-        <Button type="button" label={t("table.edit")} icon="pi pi-pencil" size="small" />
+        <Button
+          type="button"
+          label={t("table.edit")}
+          icon="pi pi-pencil"
+          size="small"
+        />
       </Link>
 
       <Link to={`${organization.id}/delete`}>
@@ -118,7 +123,11 @@ export function OrganizationsPage({ organizations }: OrganizationsPageProps) {
               setPageSize(event.rows);
             }}
           >
-            <Column field="id" header={t("table.id")} className="font-mono text-xs" />
+            <Column
+              field="id"
+              header={t("table.id")}
+              className="font-mono text-xs"
+            />
             <Column
               field="name"
               header={t("table.name")}
