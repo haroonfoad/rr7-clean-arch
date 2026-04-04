@@ -1,8 +1,9 @@
 import { Outlet, useLoaderData } from "react-router";
-import type { MetaFunction } from "react-router";
+import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 
 import { DepartmentsPage } from "~/modules/department/presentation/pages/departments-page";
 import { makeListDepartmentsUseCase } from "~/modules/department/department-module.server";
+import { requireAuthenticatedUser } from "~/modules/auth/infrastructure/session/auth-session.server";
 
 export const meta: MetaFunction = () => {
   return [
@@ -15,7 +16,8 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export async function loader() {
+export async function loader({ request }: LoaderFunctionArgs) {
+  await requireAuthenticatedUser(request);
   const departments = await makeListDepartmentsUseCase().execute();
   return { departments };
 }

@@ -2,16 +2,24 @@ import { data, redirect } from "react-router";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
-import type { ActionFunctionArgs } from "react-router";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { Form, useActionData, useNavigate, useNavigation } from "react-router";
 
+import { requireAuthenticatedUser } from "~/modules/auth/infrastructure/session/auth-session.server";
 import { makeCreateOrganizationUseCase } from "~/modules/organization/organization-module.server";
 
 type ActionData = {
   error?: string;
 };
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  await requireAuthenticatedUser(request);
+  return null;
+}
+
 export async function action({ request }: ActionFunctionArgs) {
+  await requireAuthenticatedUser(request);
+
   try {
     const formData = await request.formData();
     const name = String(formData.get("name") ?? "").trim();

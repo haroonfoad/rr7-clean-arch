@@ -1,8 +1,9 @@
 import { Outlet, useLoaderData } from "react-router";
-import type { MetaFunction } from "react-router";
+import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 
 import { OrganizationsPage } from "~/modules/organization/presentation/pages/organizations-page";
 import { makeListOrganizationsUseCase } from "~/modules/organization/organization-module.server";
+import { requireAuthenticatedUser } from "~/modules/auth/infrastructure/session/auth-session.server";
 
 export const meta: MetaFunction = () => {
   return [
@@ -15,7 +16,8 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export async function loader() {
+export async function loader({ request }: LoaderFunctionArgs) {
+  await requireAuthenticatedUser(request);
   const organizations = await makeListOrganizationsUseCase().execute();
   return { organizations };
 }

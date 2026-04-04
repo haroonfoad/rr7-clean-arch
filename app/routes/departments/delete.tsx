@@ -4,6 +4,7 @@ import { Button } from "primereact/button";
 import type { ActionFunctionArgs } from "react-router";
 import { Form, useLoaderData, useNavigate, useNavigation } from "react-router";
 
+import { requireAuthenticatedUser } from "~/modules/auth/infrastructure/session/auth-session.server";
 import { makeDeleteDepartmentUseCase } from "~/modules/department/department-module.server";
 import { makeListDepartmentsUseCase } from "~/modules/department/department-module.server";
 
@@ -11,7 +12,8 @@ type ActionData = {
   error?: string;
 };
 
-export async function loader({ params }: ActionFunctionArgs) {
+export async function loader({ request, params }: ActionFunctionArgs) {
+  await requireAuthenticatedUser(request);
   const id = String(params.id ?? "");
   const departments = await makeListDepartmentsUseCase().execute();
   const department = departments.find((item) => item.id === id);
@@ -23,7 +25,9 @@ export async function loader({ params }: ActionFunctionArgs) {
   return { department };
 }
 
-export async function action({ params }: ActionFunctionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
+  await requireAuthenticatedUser(request);
+
   try {
     const id = String(params.id ?? "");
 
