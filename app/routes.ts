@@ -1,9 +1,9 @@
 import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
 export default [
-  index("routes/index-redirect.tsx"),
+  index("routes/localization/index-redirect.tsx"),
 
-  route(":locale", "routes/locale-layout.tsx", [
+  route(":locale", "routes/localization/locale-layout.tsx", [
     index("routes/home.tsx"),
 
     route("login", "routes/auth/login.tsx"),

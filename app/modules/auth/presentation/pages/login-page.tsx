@@ -34,8 +34,8 @@ export function LoginPage() {
   const [searchParams] = useSearchParams();
   const navigation = useNavigation();
   const actionData = useActionData() as ActionData | undefined;
-  const redirectTo = normalizeRedirectTo(searchParams.get("redirectTo"));
   const locale = loaderData?.locale ?? "en";
+  const redirectTo = normalizeRedirectTo(searchParams.get("redirectTo") ?? `/${locale}`);
 
   return (
     <main className="min-h-screen bg-[linear-gradient(140deg,#f0fdf4_0%,#ecfeff_45%,#eff6ff_100%)] px-4 py-16">

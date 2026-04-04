@@ -7,6 +7,7 @@ import {
 } from "~/modules/localization/domain/entities/locale";
 import {
   detectLocale,
+  localeCookie,
   withLocalePath,
 } from "~/modules/localization/infrastructure/i18n/server-locale.server";
 
@@ -14,6 +15,20 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const localeParam = String(params.locale ?? "").toLowerCase();
 
   if (isSupportedLocale(localeParam)) {
+    const cookieHeader = request.headers.get("Cookie");
+    const cookieLocale = await localeCookie.parse(cookieHeader);
+
+    if (cookieLocale !== localeParam) {
+      return Response.json(
+        { locale: localeParam },
+        {
+          headers: {
+            "Set-Cookie": await localeCookie.serialize(localeParam),
+          },
+        },
+      );
+    }
+
     return { locale: localeParam };
   }
 

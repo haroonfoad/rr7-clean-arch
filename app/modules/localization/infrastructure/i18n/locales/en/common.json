@@ -37,5 +37,29 @@
     "en": "English",
     "ar": "Arabic",
     "ru": "Russian"
+  },
+  "organizations": {
+    "title": "Organization CRUD",
+    "subtitle": "RR7 + PrimeReact + Drizzle + Clean Architecture",
+    "description": "This page is intentionally simple to demonstrate the architecture boundaries.",
+    "add": "Add Organization",
+    "searchPlaceholder": "Search by id or name",
+    "results_one": "Showing {{count}} result",
+    "results_other": "Showing {{count}} results",
+    "empty": "No organizations yet."
+  },
+  "departments": {
+    "title": "Department CRUD",
+    "subtitle": "Cloned architecture module",
+    "description": "This route mirrors the organization module structure so you can copy it for future features.",
+    "add": "Add Department",
+    "empty": "No departments yet."
+  },
+  "table": {
+    "id": "ID",
+    "name": "Name",
+    "actions": "Actions",
+    "edit": "Edit",
+    "delete": "Delete"
   }
 }

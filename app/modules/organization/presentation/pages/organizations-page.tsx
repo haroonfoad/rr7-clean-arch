@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router";
+import { useTranslation } from "react-i18next";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { Column } from "primereact/column";
@@ -15,6 +16,7 @@ interface OrganizationsPageProps {
 }
 
 export function OrganizationsPage({ organizations }: OrganizationsPageProps) {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [first, setFirst] = useState(0);
   const [pageSize, setPageSize] = useState(5);
@@ -48,13 +50,13 @@ export function OrganizationsPage({ organizations }: OrganizationsPageProps) {
   const actionsBodyTemplate = (organization: OrganizationRow) => (
     <div className="flex gap-2 justify-end">
       <Link to={`${organization.id}/edit`}>
-        <Button type="button" label="Edit" icon="pi pi-pencil" size="small" />
+        <Button type="button" label={t("table.edit")} icon="pi pi-pencil" size="small" />
       </Link>
 
       <Link to={`${organization.id}/delete`}>
         <Button
           type="button"
-          label="Delete"
+          label={t("table.delete")}
           icon="pi pi-trash"
           size="small"
           severity="danger"
@@ -68,19 +70,18 @@ export function OrganizationsPage({ organizations }: OrganizationsPageProps) {
     <main className="min-h-screen bg-[radial-gradient(circle_at_10%_10%,#fef9c3_0%,#eef2ff_40%,#f8fafc_100%)] px-4 py-10">
       <section className="mx-auto w-full max-w-4xl space-y-6">
         <Card
-          title="Organization CRUD"
-          subTitle="RR7 + PrimeReact + Drizzle + Clean Architecture"
+          title={t("organizations.title")}
+          subTitle={t("organizations.subtitle")}
         >
           <p className="mb-6 text-sm text-slate-600">
-            This page is intentionally simple to demonstrate the architecture
-            boundaries.
+            {t("organizations.description")}
           </p>
 
           <div className="mb-6 flex justify-end">
             <Link to="new">
               <Button
                 type="button"
-                label="Add Organization"
+                label={t("organizations.add")}
                 icon="pi pi-plus"
               />
             </Link>
@@ -95,19 +96,19 @@ export function OrganizationsPage({ organizations }: OrganizationsPageProps) {
                   setSearch(event.target.value);
                   setFirst(0);
                 }}
-                placeholder="Search by id or name"
+                placeholder={t("organizations.searchPlaceholder")}
                 className="w-full"
               />
             </span>
             <p className="text-xs text-slate-500">
-              Showing {rows.length} result{rows.length === 1 ? "" : "s"}
+              {t("organizations.results", { count: rows.length })}
             </p>
           </div>
 
           <DataTable
             value={rows}
             stripedRows
-            emptyMessage="No organizations yet."
+            emptyMessage={t("organizations.empty")}
             paginator
             first={first}
             rows={pageSize}
@@ -117,15 +118,15 @@ export function OrganizationsPage({ organizations }: OrganizationsPageProps) {
               setPageSize(event.rows);
             }}
           >
-            <Column field="id" header="ID" className="font-mono text-xs" />
+            <Column field="id" header={t("table.id")} className="font-mono text-xs" />
             <Column
               field="name"
-              header="Name"
+              header={t("table.name")}
               body={nameBodyTemplate}
               style={{ minWidth: "14rem" }}
             />
             <Column
-              header="Actions"
+              header={t("table.actions")}
               body={actionsBodyTemplate}
               style={{ width: "12rem" }}
             />
