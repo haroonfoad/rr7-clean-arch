@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router";
+import { Outlet, useLoaderData } from "react-router";
 import type { MetaFunction } from "react-router";
 
 import { OrganizationsPage } from "~/modules/organization/presentation/pages/organizations-page";
@@ -22,5 +22,10 @@ export async function loader() {
 
 export default function OrganizationsRoute() {
   const { organizations } = useLoaderData<typeof loader>();
-  return <OrganizationsPage organizations={organizations} />;
+  return (
+    <>
+      <OrganizationsPage organizations={organizations} />
+      <Outlet />
+    </>
+  );
 }

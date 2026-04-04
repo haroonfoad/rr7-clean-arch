@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { Form, useNavigation } from "react-router";
+import { useMemo, useState } from "react";
+import { Link } from "react-router";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { Column } from "primereact/column";
@@ -12,127 +12,55 @@ type OrganizationRow = Organization & { currentName: string };
 
 interface OrganizationsPageProps {
   organizations: Organization[];
-  error?: string;
 }
 
-export function OrganizationsPage({
-  organizations,
-  error,
-}: OrganizationsPageProps) {
-  const navigation = useNavigation();
-  const [newOrganizationName, setNewOrganizationName] = useState("");
-  const [editingRows, setEditingRows] = useState<Record<string, string>>({});
+export function OrganizationsPage({ organizations }: OrganizationsPageProps) {
   const [search, setSearch] = useState("");
   const [first, setFirst] = useState(0);
   const [pageSize, setPageSize] = useState(5);
 
-  const isSubmitting = navigation.state === "submitting";
-  const pendingAction = navigation.formAction ?? "";
-  const pendingId = String(navigation.formData?.get("id") ?? "");
-  const pendingName = String(navigation.formData?.get("name") ?? "").trim();
-
-  useEffect(() => {
-    if (!isSubmitting && !error && pendingAction.endsWith("/new")) {
-      setNewOrganizationName("");
-    }
-  }, [isSubmitting, error, pendingAction]);
-
-  const optimisticOrganizations = useMemo(() => {
-    if (!isSubmitting || !pendingAction) {
-      return organizations;
-    }
-
-    if (pendingAction.endsWith("/new") && pendingName) {
-      return [
-        {
-          id: `pending-${crypto.randomUUID()}`,
-          name: pendingName,
-        },
-        ...organizations,
-      ];
-    }
-
-    if (pendingAction.endsWith("/edit") && pendingId && pendingName) {
-      return organizations.map((organization) =>
-        organization.id === pendingId
-          ? {
-              ...organization,
-              name: pendingName,
-            }
-          : organization,
-      );
-    }
-
-    if (pendingAction.endsWith("/delete") && pendingId) {
-      return organizations.filter(
-        (organization) => organization.id !== pendingId,
-      );
-    }
-
-    return organizations;
-  }, [organizations, isSubmitting, pendingAction, pendingId, pendingName]);
-
   const filteredOrganizations = useMemo(() => {
     const term = search.trim().toLowerCase();
     if (!term) {
-      return optimisticOrganizations;
+      return organizations;
     }
 
-    return optimisticOrganizations.filter(
+    return organizations.filter(
       (organization) =>
         organization.id.toLowerCase().includes(term) ||
         organization.name.toLowerCase().includes(term),
     );
-  }, [optimisticOrganizations, search]);
+  }, [organizations, search]);
 
   const rows = useMemo(
     () =>
       filteredOrganizations.map((organization) => ({
         ...organization,
-        currentName: editingRows[organization.id] ?? organization.name,
+        currentName: organization.name,
       })),
-    [filteredOrganizations, editingRows],
+    [filteredOrganizations],
   );
 
   const nameBodyTemplate = (organization: OrganizationRow) => (
-    <InputText
-      value={organization.currentName}
-      onChange={(event) => {
-        setEditingRows((previous) => ({
-          ...previous,
-          [organization.id]: event.target.value,
-        }));
-      }}
-      className="w-full"
-    />
+    <span>{organization.currentName}</span>
   );
 
   const actionsBodyTemplate = (organization: OrganizationRow) => (
     <div className="flex gap-2 justify-end">
-      <Form method="post" action={`/organizations/${organization.id}/edit`}>
-        <input type="hidden" name="id" value={organization.id} />
-        <input type="hidden" name="name" value={organization.currentName} />
-        <Button
-          type="submit"
-          label="Save"
-          icon="pi pi-check"
-          size="small"
-          disabled={isSubmitting}
-        />
-      </Form>
+      <Link to={`/organizations/${organization.id}/edit`}>
+        <Button type="button" label="Edit" icon="pi pi-pencil" size="small" />
+      </Link>
 
-      <Form method="post" action={`/organizations/${organization.id}/delete`}>
-        <input type="hidden" name="id" value={organization.id} />
+      <Link to={`/organizations/${organization.id}/delete`}>
         <Button
-          type="submit"
+          type="button"
           label="Delete"
           icon="pi pi-trash"
           size="small"
           severity="danger"
           outlined
-          disabled={isSubmitting}
         />
-      </Form>
+      </Link>
     </div>
   );
 
@@ -148,28 +76,15 @@ export function OrganizationsPage({
             boundaries.
           </p>
 
-          <Form
-            method="post"
-            action="/organizations/new"
-            className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center"
-          >
-            <span className="p-input-icon-left flex-1">
-              <i className="pi pi-building" />
-              <InputText
-                name="name"
-                value={newOrganizationName}
-                onChange={(event) => setNewOrganizationName(event.target.value)}
-                placeholder="Organization name"
-                className="w-full"
+          <div className="mb-6 flex justify-end">
+            <Link to="/organizations/new">
+              <Button
+                type="button"
+                label="Add Organization"
+                icon="pi pi-plus"
               />
-            </span>
-            <Button
-              type="submit"
-              label="Add"
-              icon="pi pi-plus"
-              disabled={isSubmitting}
-            />
-          </Form>
+            </Link>
+          </div>
 
           <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <span className="p-input-icon-left w-full sm:max-w-sm">
@@ -188,12 +103,6 @@ export function OrganizationsPage({
               Showing {rows.length} result{rows.length === 1 ? "" : "s"}
             </p>
           </div>
-
-          {error ? (
-            <div className="mb-4 rounded border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800">
-              {error}
-            </div>
-          ) : null}
 
           <DataTable
             value={rows}

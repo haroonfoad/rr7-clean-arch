@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router";
+import { Outlet, useLoaderData } from "react-router";
 import type { MetaFunction } from "react-router";
 
 import { DepartmentsPage } from "~/modules/department/presentation/pages/departments-page";
@@ -22,5 +22,10 @@ export async function loader() {
 
 export default function DepartmentsRoute() {
   const { departments } = useLoaderData<typeof loader>();
-  return <DepartmentsPage departments={departments} />;
+  return (
+    <>
+      <DepartmentsPage departments={departments} />
+      <Outlet />
+    </>
+  );
 }

@@ -1,5 +1,9 @@
 import { data, redirect } from "react-router";
+import { Dialog } from "primereact/dialog";
+import { Button } from "primereact/button";
+import { InputText } from "primereact/inputtext";
 import type { ActionFunctionArgs } from "react-router";
+import { Form, useActionData, useNavigate, useNavigation } from "react-router";
 
 import { makeCreateDepartmentUseCase } from "~/modules/department/department-module.server";
 
@@ -33,5 +37,44 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function DepartmentsNewRoute() {
-  return null;
+  const navigate = useNavigate();
+  const navigation = useNavigation();
+  const actionData = useActionData() as ActionData | undefined;
+
+  return (
+    <Dialog
+      header="Add Department"
+      visible
+      modal
+      style={{ width: "30rem" }}
+      onHide={() => navigate("/departments")}
+    >
+      <Form method="post" className="space-y-4">
+        <div>
+          <label htmlFor="name" className="mb-2 block text-sm font-medium">
+            Department Name
+          </label>
+          <InputText id="name" name="name" className="w-full" autoFocus />
+        </div>
+
+        {actionData?.error ? (
+          <p className="text-sm text-red-700">{actionData.error}</p>
+        ) : null}
+
+        <div className="flex justify-end gap-2">
+          <Button
+            type="button"
+            label="Cancel"
+            text
+            onClick={() => navigate("/departments")}
+          />
+          <Button
+            type="submit"
+            label="Create"
+            loading={navigation.state === "submitting"}
+          />
+        </div>
+      </Form>
+    </Dialog>
+  );
 }

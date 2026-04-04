@@ -1,75 +1,37 @@
-import { useMemo, useState } from "react";
-import { Form, useNavigation } from "react-router";
+import { useMemo } from "react";
+import { Link } from "react-router";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { InputText } from "primereact/inputtext";
 
 import type { Department } from "../../domain/entities/department";
 
-type DepartmentRow = Department & { currentName: string };
+type DepartmentRow = Department;
 
 interface DepartmentsPageProps {
   departments: Department[];
-  error?: string;
 }
 
-export function DepartmentsPage({ departments, error }: DepartmentsPageProps) {
-  const navigation = useNavigation();
-  const [newDepartmentName, setNewDepartmentName] = useState("");
-  const [editingRows, setEditingRows] = useState<Record<string, string>>({});
-
-  const isSubmitting = navigation.state === "submitting";
-
-  const rows = useMemo(
-    () =>
-      departments.map((department) => ({
-        ...department,
-        currentName: editingRows[department.id] ?? department.name,
-      })),
-    [departments, editingRows],
-  );
-
-  const nameBodyTemplate = (department: DepartmentRow) => (
-    <InputText
-      value={department.currentName}
-      onChange={(event) => {
-        setEditingRows((previous) => ({
-          ...previous,
-          [department.id]: event.target.value,
-        }));
-      }}
-      className="w-full"
-    />
-  );
+export function DepartmentsPage({ departments }: DepartmentsPageProps) {
+  const rows = useMemo(() => departments, [departments]);
 
   const actionsBodyTemplate = (department: DepartmentRow) => (
     <div className="flex gap-2 justify-end">
-      <Form method="post" action={`/departments/${department.id}/edit`}>
-        <input type="hidden" name="id" value={department.id} />
-        <input type="hidden" name="name" value={department.currentName} />
-        <Button
-          type="submit"
-          label="Save"
-          icon="pi pi-check"
-          size="small"
-          disabled={isSubmitting}
-        />
-      </Form>
+      <Link to={`/departments/${department.id}/edit`}>
+        <Button type="button" label="Edit" icon="pi pi-pencil" size="small" />
+      </Link>
 
-      <Form method="post" action={`/departments/${department.id}/delete`}>
-        <input type="hidden" name="id" value={department.id} />
+      <Link to={`/departments/${department.id}/delete`}>
         <Button
-          type="submit"
+          type="button"
           label="Delete"
           icon="pi pi-trash"
           size="small"
           severity="danger"
           outlined
-          disabled={isSubmitting}
         />
-      </Form>
+      </Link>
     </div>
   );
 
@@ -82,34 +44,11 @@ export function DepartmentsPage({ departments, error }: DepartmentsPageProps) {
             it for future features.
           </p>
 
-          <Form
-            method="post"
-            action="/departments/new"
-            className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center"
-          >
-            <span className="p-input-icon-left flex-1">
-              <i className="pi pi-sitemap" />
-              <InputText
-                name="name"
-                value={newDepartmentName}
-                onChange={(event) => setNewDepartmentName(event.target.value)}
-                placeholder="Department name"
-                className="w-full"
-              />
-            </span>
-            <Button
-              type="submit"
-              label="Add"
-              icon="pi pi-plus"
-              disabled={isSubmitting}
-            />
-          </Form>
-
-          {error ? (
-            <div className="mb-4 rounded border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800">
-              {error}
-            </div>
-          ) : null}
+          <div className="mb-6 flex justify-end">
+            <Link to="/departments/new">
+              <Button type="button" label="Add Department" icon="pi pi-plus" />
+            </Link>
+          </div>
 
           <DataTable
             value={rows}
@@ -117,12 +56,7 @@ export function DepartmentsPage({ departments, error }: DepartmentsPageProps) {
             emptyMessage="No departments yet."
           >
             <Column field="id" header="ID" className="font-mono text-xs" />
-            <Column
-              field="name"
-              header="Name"
-              body={nameBodyTemplate}
-              style={{ minWidth: "14rem" }}
-            />
+            <Column field="name" header="Name" style={{ minWidth: "14rem" }} />
             <Column
               header="Actions"
               body={actionsBodyTemplate}
