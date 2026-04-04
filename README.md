@@ -6,6 +6,7 @@ Tables:
 
 - `organizations`: `id`, `name`
 - `departments`: `id`, `name`
+- `users`: `id`, `username`, `password`
 
 Stack used:
 
@@ -49,6 +50,8 @@ npm run db:migrate
 `organization.db` is created automatically on first run, and the `organizations` table is ensured by the infrastructure DB client.
 
 The `departments` table is also ensured automatically by the department infrastructure DB client.
+
+The `users` table is ensured automatically by the auth infrastructure DB client.
 
 ## Clean architecture structure
 

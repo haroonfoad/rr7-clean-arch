@@ -1,8 +1,8 @@
 import { AuthenticateUserUseCase } from "./application/use-cases/authenticate-user";
-import { EnvAuthRepository } from "./infrastructure/repositories/env-auth-repository.server";
+import { DrizzleAuthRepository } from "./infrastructure/repositories/drizzle-auth-repository.server";
 
 function buildAuthRepository() {
-  return new EnvAuthRepository();
+  return new DrizzleAuthRepository();
 }
 
 export function makeAuthenticateUserUseCase(): AuthenticateUserUseCase {
