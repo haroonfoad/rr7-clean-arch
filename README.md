@@ -45,13 +45,24 @@ Each module's `index` route renders the table, and child routes render PrimeReac
 ```bash
 npm run db:generate
 npm run db:migrate
+npm run db:seed
 ```
 
-`organization.db` is created automatically on first run, and the `organizations` table is ensured by the infrastructure DB client.
+`organization.db` is created automatically when migrations run.
 
-The `departments` table is also ensured automatically by the department infrastructure DB client.
+The `organizations`, `departments`, and `users` tables are managed through Drizzle migration files.
 
-The `users` table is ensured automatically by the auth infrastructure DB client.
+Migrations are generated from module schemas under `app/modules/**/infrastructure/db/schema.ts` into the `drizzle/` folder.
+
+Recommended workflow when schema changes:
+
+1. Update module schema files.
+2. Run `npm run db:generate`.
+3. Commit generated migration files.
+4. Run `npm run db:migrate` in deployment/startup.
+5. Run `npm run db:seed` for idempotent bootstrap data (default auth user).
+
+`dev` and `start` automatically run migration and seed first via `predev` and `prestart` scripts.
 
 ## Clean architecture structure
 
