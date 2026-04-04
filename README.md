@@ -1,87 +1,59 @@
-# Welcome to React Router!
+# RR7 Clean Architecture Starter
 
-A modern, production-ready template for building full-stack React applications using React Router.
+This project contains a simple CRUD example for an `organization` table:
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+- `id: uuid`
+- `name: string`
 
-## Features
+It now also includes a second `department` module with the same boundaries as a replication template.
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+Stack used:
 
-## Getting Started
+- React Router v7 (SSR)
+- PrimeReact + PrimeIcons
+- Tailwind CSS v4
+- Drizzle ORM + SQLite (`better-sqlite3`)
 
-### Installation
-
-Install the dependencies:
+## Run the app
 
 ```bash
 npm install
-```
-
-### Development
-
-Start the development server with HMR:
-
-```bash
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+Open `http://localhost:5173` and navigate to `/organizations`.
+Also available: `/departments`.
 
-## Building for Production
-
-Create a production build:
-
-```bash
-npm run build
-```
-
-## Deployment
-
-### Docker Deployment
-
-To build and run using Docker:
+## Drizzle commands
 
 ```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
+npm run db:generate
+npm run db:migrate
 ```
 
-The containerized application can be deployed to any platform that supports Docker, including:
+`organization.db` is created automatically on first run, and the `organizations` table is ensured by the infrastructure DB client.
 
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
+## Clean architecture structure
 
-### DIY Deployment
+The organization module is in `app/modules/organization` and is split into:
 
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
+- `domain`: entities and repository contracts
+- `application`: use cases (business rules)
+- `infrastructure`: Drizzle schema + repository implementations
+- `organization-module.server.ts`: composition root
+- `app/routes/organizations.tsx`: presentation layer (thin route)
 
-Make sure to deploy the output of `npm run build`
+Organization route UI includes:
 
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
+- Search by id/name
+- Pagination
+- Optimistic UI behavior while mutations are in flight
 
-## Styling
+## How to replicate for other modules
 
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.
+1. Create `app/modules/<module-name>` with the same layer folders.
+2. Keep entities/contracts in `domain` only.
+3. Place business operations as use-case classes in `application/use-cases`.
+4. Implement repository adapters in `infrastructure/repositories`.
+5. Add a module composition root to wire concrete implementations.
+6. In RR7 route `loader/action`, call use cases instead of direct ORM calls.
