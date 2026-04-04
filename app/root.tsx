@@ -5,13 +5,26 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "react-router";
+import { useTranslation } from "react-i18next";
 
 import type { Route } from "./+types/root";
+import { getTextDirection } from "./modules/localization/domain/entities/locale";
+import { detectLocale } from "./modules/localization/infrastructure/i18n/server-locale.server";
+import { LocalizationProvider } from "./modules/localization/presentation/providers/localization-provider";
 import "./app.css";
 import "primeicons/primeicons.css";
 import "primereact/resources/primereact.min.css";
 import "primereact/resources/themes/lara-light-blue/theme.css";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const locale = await detectLocale(request);
+  return {
+    locale,
+    dir: getTextDirection(locale),
+  };
+}
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -27,8 +40,10 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { locale, dir } = useLoaderData<typeof loader>();
+
   return (
-    <html lang="en">
+    <html lang={locale} dir={dir}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -36,7 +51,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        <LocalizationProvider locale={locale}>{children}</LocalizationProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -49,16 +64,16 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
+  const { t } = useTranslation();
+
+  let message = t("error.oops");
+  let details = t("error.fallback");
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
+    message = error.status === 404 ? "404" : t("error.generic");
     details =
-      error.status === 404
-        ? "The requested page could not be found."
-        : error.statusText || details;
+      error.status === 404 ? t("error.notFound") : error.statusText || details;
   } else if (import.meta.env.DEV && error && error instanceof Error) {
     details = error.message;
     stack = error.stack;

@@ -5,6 +5,7 @@ import type { ActionFunctionArgs } from "react-router";
 import { Form, useLoaderData, useNavigate, useNavigation } from "react-router";
 
 import { requireAuthenticatedUser } from "~/modules/auth/infrastructure/session/auth-session.server";
+import { withLocalePath } from "~/modules/localization/infrastructure/i18n/server-locale.server";
 import { makeDeleteOrganizationUseCase } from "~/modules/organization/organization-module.server";
 import { makeListOrganizationsUseCase } from "~/modules/organization/organization-module.server";
 
@@ -39,7 +40,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
     }
 
     await makeDeleteOrganizationUseCase().execute(id);
-    return redirect("/organizations");
+    const locale = String(params.locale ?? "en");
+    return redirect(withLocalePath(locale, "/organizations"));
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Unexpected action error.";
@@ -58,7 +60,7 @@ export default function OrganizationsDeleteRoute() {
       visible
       modal
       style={{ width: "30rem" }}
-      onHide={() => navigate("/organizations")}
+      onHide={() => navigate("..")}
     >
       <Form method="post" className="space-y-4">
         <p className="text-sm text-slate-700">
@@ -70,7 +72,7 @@ export default function OrganizationsDeleteRoute() {
             type="button"
             label="Cancel"
             text
-            onClick={() => navigate("/organizations")}
+            onClick={() => navigate("..")}
           />
           <Button
             type="submit"

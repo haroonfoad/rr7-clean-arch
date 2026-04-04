@@ -18,11 +18,11 @@ export function DepartmentsPage({ departments }: DepartmentsPageProps) {
 
   const actionsBodyTemplate = (department: DepartmentRow) => (
     <div className="flex gap-2 justify-end">
-      <Link to={`/departments/${department.id}/edit`}>
+      <Link to={`${department.id}/edit`}>
         <Button type="button" label="Edit" icon="pi pi-pencil" size="small" />
       </Link>
 
-      <Link to={`/departments/${department.id}/delete`}>
+      <Link to={`${department.id}/delete`}>
         <Button
           type="button"
           label="Delete"
@@ -45,7 +45,7 @@ export function DepartmentsPage({ departments }: DepartmentsPageProps) {
           </p>
 
           <div className="mb-6 flex justify-end">
-            <Link to="/departments/new">
+            <Link to="new">
               <Button type="button" label="Add Department" icon="pi pi-plus" />
             </Link>
           </div>

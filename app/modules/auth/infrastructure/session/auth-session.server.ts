@@ -1,6 +1,10 @@
 import { createCookieSessionStorage, redirect } from "react-router";
 
 import type { AuthUser } from "../../domain/entities/auth-user";
+import {
+  localeFromRequestPath,
+  withLocalePath,
+} from "~/modules/localization/infrastructure/i18n/server-locale.server";
 
 type SessionUser = Pick<AuthUser, "id" | "username">;
 
@@ -61,8 +65,11 @@ export async function requireAuthenticatedUser(
     return user;
   }
 
+  const locale = localeFromRequestPath(request);
   const redirectTo = encodeURIComponent(buildCurrentPath(request));
-  throw redirect(`/login?redirectTo=${redirectTo}`);
+  throw redirect(
+    `${withLocalePath(locale, "/login")}?redirectTo=${redirectTo}`,
+  );
 }
 
 export async function createUserSession({
@@ -86,8 +93,9 @@ export async function destroyUserSession(request: Request) {
   const session = await sessionStorage.getSession(
     request.headers.get("Cookie"),
   );
+  const locale = localeFromRequestPath(request);
 
-  return redirect("/login", {
+  return redirect(withLocalePath(locale, "/login"), {
     headers: {
       "Set-Cookie": await sessionStorage.destroySession(session),
     },

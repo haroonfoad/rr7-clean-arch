@@ -47,11 +47,11 @@ export function OrganizationsPage({ organizations }: OrganizationsPageProps) {
 
   const actionsBodyTemplate = (organization: OrganizationRow) => (
     <div className="flex gap-2 justify-end">
-      <Link to={`/organizations/${organization.id}/edit`}>
+      <Link to={`${organization.id}/edit`}>
         <Button type="button" label="Edit" icon="pi pi-pencil" size="small" />
       </Link>
 
-      <Link to={`/organizations/${organization.id}/delete`}>
+      <Link to={`${organization.id}/delete`}>
         <Button
           type="button"
           label="Delete"
@@ -77,7 +77,7 @@ export function OrganizationsPage({ organizations }: OrganizationsPageProps) {
           </p>
 
           <div className="mb-6 flex justify-end">
-            <Link to="/organizations/new">
+            <Link to="new">
               <Button
                 type="button"
                 label="Add Organization"

@@ -12,6 +12,7 @@ import {
 } from "react-router";
 
 import { requireAuthenticatedUser } from "~/modules/auth/infrastructure/session/auth-session.server";
+import { withLocalePath } from "~/modules/localization/infrastructure/i18n/server-locale.server";
 import { makeUpdateOrganizationUseCase } from "~/modules/organization/organization-module.server";
 import { makeListOrganizationsUseCase } from "~/modules/organization/organization-module.server";
 
@@ -49,7 +50,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
     await makeUpdateOrganizationUseCase().execute({ id, name });
 
-    return redirect("/organizations");
+    const locale = String(params.locale ?? "en");
+    return redirect(withLocalePath(locale, "/organizations"));
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Unexpected action error.";
@@ -69,7 +71,7 @@ export default function OrganizationsEditRoute() {
       visible
       modal
       style={{ width: "30rem" }}
-      onHide={() => navigate("/organizations")}
+      onHide={() => navigate("..")}
     >
       <Form method="post" className="space-y-4">
         <input type="hidden" name="id" value={organization.id} />
@@ -96,7 +98,7 @@ export default function OrganizationsEditRoute() {
             type="button"
             label="Cancel"
             text
-            onClick={() => navigate("/organizations")}
+            onClick={() => navigate("..")}
           />
           <Button
             type="submit"

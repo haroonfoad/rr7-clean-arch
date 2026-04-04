@@ -6,6 +6,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { Form, useActionData, useNavigate, useNavigation } from "react-router";
 
 import { requireAuthenticatedUser } from "~/modules/auth/infrastructure/session/auth-session.server";
+import { withLocalePath } from "~/modules/localization/infrastructure/i18n/server-locale.server";
 import { makeCreateDepartmentUseCase } from "~/modules/department/department-module.server";
 
 type ActionData = {
@@ -17,7 +18,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return null;
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   await requireAuthenticatedUser(request);
 
   try {
@@ -36,7 +37,8 @@ export async function action({ request }: ActionFunctionArgs) {
       name,
     });
 
-    return redirect("/departments");
+    const locale = String(params.locale ?? "en");
+    return redirect(withLocalePath(locale, "/departments"));
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Unexpected action error.";
@@ -55,7 +57,7 @@ export default function DepartmentsNewRoute() {
       visible
       modal
       style={{ width: "30rem" }}
-      onHide={() => navigate("/departments")}
+      onHide={() => navigate("..")}
     >
       <Form method="post" className="space-y-4">
         <div>
@@ -74,7 +76,7 @@ export default function DepartmentsNewRoute() {
             type="button"
             label="Cancel"
             text
-            onClick={() => navigate("/departments")}
+            onClick={() => navigate("..")}
           />
           <Button
             type="submit"

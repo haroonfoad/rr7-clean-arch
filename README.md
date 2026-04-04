@@ -46,6 +46,30 @@ The app uses module route folders under `app/routes`:
 
 Each module's `index` route renders the table, and child routes render PrimeReact `Dialog` overlays via nested routing.
 
+## Localization
+
+Current supported locales:
+
+- `en`
+- `ar` (RTL)
+- `ru`
+
+Localization is implemented with `i18next` + `react-i18next` and persisted via a `locale` cookie.
+
+Canonical locale strategy is URL-based routing with `/:locale/*` paths, for example:
+
+- `/en`
+- `/ar/login`
+- `/ru/organizations`
+
+Translation files are JSON-based for Weblate compatibility:
+
+- `app/modules/localization/infrastructure/i18n/locales/en/common.json`
+- `app/modules/localization/infrastructure/i18n/locales/ar/common.json`
+- `app/modules/localization/infrastructure/i18n/locales/ru/common.json`
+
+Language switching updates the first URL segment to the selected locale while preserving the current route.
+
 ## Drizzle commands
 
 ```bash

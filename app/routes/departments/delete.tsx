@@ -5,6 +5,7 @@ import type { ActionFunctionArgs } from "react-router";
 import { Form, useLoaderData, useNavigate, useNavigation } from "react-router";
 
 import { requireAuthenticatedUser } from "~/modules/auth/infrastructure/session/auth-session.server";
+import { withLocalePath } from "~/modules/localization/infrastructure/i18n/server-locale.server";
 import { makeDeleteDepartmentUseCase } from "~/modules/department/department-module.server";
 import { makeListDepartmentsUseCase } from "~/modules/department/department-module.server";
 
@@ -39,7 +40,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
     }
 
     await makeDeleteDepartmentUseCase().execute(id);
-    return redirect("/departments");
+    const locale = String(params.locale ?? "en");
+    return redirect(withLocalePath(locale, "/departments"));
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Unexpected action error.";
@@ -58,7 +60,7 @@ export default function DepartmentsDeleteRoute() {
       visible
       modal
       style={{ width: "30rem" }}
-      onHide={() => navigate("/departments")}
+      onHide={() => navigate("..")}
     >
       <Form method="post" className="space-y-4">
         <p className="text-sm text-slate-700">
@@ -70,7 +72,7 @@ export default function DepartmentsDeleteRoute() {
             type="button"
             label="Cancel"
             text
-            onClick={() => navigate("/departments")}
+            onClick={() => navigate("..")}
           />
           <Button
             type="submit"

@@ -1,0 +1,41 @@
+{
+  "home": {
+    "badge": "RR7 Template",
+    "title": "Clean Architecture Modules",
+    "description": "Start with the Organization module, then replicate the same structure for the rest of your system.",
+    "signedInAs": "Signed in as {{username}}.",
+    "signInPrompt": "Sign in first to access module routes.",
+    "openOrganizations": "Open Organization CRUD",
+    "openDepartments": "Open Department CRUD",
+    "openLogin": "Open Login"
+  },
+  "login": {
+    "badge": "Access",
+    "title": "Sign in",
+    "description": "Authenticate before opening Organizations or Departments.",
+    "username": "Username",
+    "password": "Password",
+    "signIn": "Sign in",
+    "backHome": "Back Home",
+    "demoCredentials": "Demo credentials"
+  },
+  "auth": {
+    "missingCredentials": "Username and password are required.",
+    "invalidCredentials": "Invalid username or password."
+  },
+  "common": {
+    "logout": "Logout"
+  },
+  "error": {
+    "oops": "Oops!",
+    "fallback": "An unexpected error occurred.",
+    "notFound": "The requested page could not be found.",
+    "generic": "Error"
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "ar": "Arabic",
+    "ru": "Russian"
+  }
+}
