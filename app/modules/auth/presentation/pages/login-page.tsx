@@ -11,6 +11,7 @@ import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 
 import { LanguageSwitcher } from "~/modules/localization/presentation/components/language-switcher";
+import { Password } from "primereact/password";
 
 type ActionData = {
   error?: string;
@@ -78,11 +79,16 @@ export function LoginPage() {
             >
               {t("login.password")}
             </label>
-            <InputText
+            <Password
               id="password"
               name="password"
-              type="password"
-              className="w-full"
+              toggleMask
+              feedback={false}
+              pt={{
+                root: { className: "w-full" },
+                iconField: { root: { className: "w-full" } },
+                input: { className: "w-full" },
+              }}
             />
           </div>
 
@@ -106,8 +112,11 @@ export function LoginPage() {
         </Form>
 
         <p className="mt-6 text-xs text-slate-500">
-          {t("login.demoCredentials")}: <strong>admin</strong> /{" "}
-          <strong>admin123</strong>
+          <strong>{t("login.demoCredentials")}:</strong>
+          <br />
+          Admin: <strong>admin</strong> / <strong>admin123</strong>
+          <br />
+          Data Viewer: <strong>viewer</strong> / <strong>viewer123</strong>
         </p>
       </section>
     </main>

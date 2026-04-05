@@ -71,9 +71,16 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : t("error.generic");
-    details =
-      error.status === 404 ? t("error.notFound") : error.statusText || details;
+    if (error.status === 404) {
+      message = "404";
+      details = t("error.notFound");
+    } else if (error.status === 403) {
+      message = t("error.forbidden");
+      details = t("error.noPermission");
+    } else {
+      message = t("error.generic");
+      details = error.statusText || details;
+    }
   } else if (import.meta.env.DEV && error && error instanceof Error) {
     details = error.message;
     stack = error.stack;

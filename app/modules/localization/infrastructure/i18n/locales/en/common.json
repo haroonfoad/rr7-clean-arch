@@ -30,7 +30,9 @@
     "oops": "Oops!",
     "fallback": "An unexpected error occurred.",
     "notFound": "The requested page could not be found.",
-    "generic": "Error"
+    "generic": "Error",
+    "forbidden": "Access Denied",
+    "noPermission": "You don't have permission to access this page."
   },
   "language": {
     "label": "Language",
