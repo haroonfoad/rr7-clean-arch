@@ -78,7 +78,12 @@ export async function action({ request }: ActionFunctionArgs) {
 
   return createUserSession({
     request,
-    user: { id: user.id, username: user.username },
+    user: {
+      id: user.id,
+      username: user.username,
+      roles: user.roles,
+      permissions: user.permissions,
+    },
     redirectTo,
   });
 }

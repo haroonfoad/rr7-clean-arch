@@ -3,7 +3,8 @@ import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 
 import { DepartmentsPage } from "~/modules/department/presentation/pages/departments-page";
 import { makeListDepartmentsUseCase } from "~/modules/department/department-module.server";
-import { requireAuthenticatedUser } from "~/modules/auth/infrastructure/session/auth-session.server";
+import { PERMISSIONS } from "~/modules/auth/domain/entities/permission";
+import { requirePermission } from "~/modules/auth/infrastructure/session/auth-session.server";
 
 export const meta: MetaFunction = () => {
   return [
@@ -17,7 +18,7 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  await requireAuthenticatedUser(request);
+  await requirePermission(request, PERMISSIONS.DEPARTMENTS_LIST);
   const departments = await makeListDepartmentsUseCase().execute();
   return { departments };
 }

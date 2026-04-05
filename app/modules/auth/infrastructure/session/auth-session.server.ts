@@ -1,12 +1,14 @@
 import { createCookieSessionStorage, redirect } from "react-router";
+import { data } from "react-router";
 
 import type { AuthUser } from "../../domain/entities/auth-user";
+import type { PermissionKey } from "../../domain/entities/permission";
 import {
   localeFromRequestPath,
   withLocalePath,
 } from "~/modules/localization/infrastructure/i18n/server-locale.server";
 
-type SessionUser = Pick<AuthUser, "id" | "username">;
+type SessionUser = Pick<AuthUser, "id" | "username" | "roles" | "permissions">;
 
 type CreateUserSessionInput = {
   request: Request;
@@ -70,6 +72,19 @@ export async function requireAuthenticatedUser(
   throw redirect(
     `${withLocalePath(locale, "/login")}?redirectTo=${redirectTo}`,
   );
+}
+
+export async function requirePermission(
+  request: Request,
+  permission: PermissionKey,
+): Promise<SessionUser> {
+  const user = await requireAuthenticatedUser(request);
+
+  if (user.permissions.includes(permission)) {
+    return user;
+  }
+
+  throw data("Forbidden", { status: 403 });
 }
 
 export async function createUserSession({

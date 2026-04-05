@@ -2,7 +2,8 @@ import { data, redirect } from "react-router";
 import type { ActionFunctionArgs } from "react-router";
 import { useLoaderData, useNavigate, useNavigation } from "react-router";
 
-import { requireAuthenticatedUser } from "~/modules/auth/infrastructure/session/auth-session.server";
+import { PERMISSIONS } from "~/modules/auth/domain/entities/permission";
+import { requirePermission } from "~/modules/auth/infrastructure/session/auth-session.server";
 import { withLocalePath } from "~/modules/localization/infrastructure/i18n/server-locale.server";
 import { makeDeleteOrganizationUseCase } from "~/modules/organization/organization-module.server";
 import { makeListOrganizationsUseCase } from "~/modules/organization/organization-module.server";
@@ -13,7 +14,7 @@ type ActionData = {
 };
 
 export async function loader({ request, params }: ActionFunctionArgs) {
-  await requireAuthenticatedUser(request);
+  await requirePermission(request, PERMISSIONS.ORGANIZATIONS_DELETE);
   const id = String(params.id ?? "");
   const organizations = await makeListOrganizationsUseCase().execute();
   const organization = organizations.find((item) => item.id === id);
@@ -26,7 +27,7 @@ export async function loader({ request, params }: ActionFunctionArgs) {
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  await requireAuthenticatedUser(request);
+  await requirePermission(request, PERMISSIONS.ORGANIZATIONS_DELETE);
 
   try {
     const id = String(params.id ?? "");

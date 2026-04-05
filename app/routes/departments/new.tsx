@@ -2,7 +2,8 @@ import { data, redirect } from "react-router";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { useActionData, useNavigate, useNavigation } from "react-router";
 
-import { requireAuthenticatedUser } from "~/modules/auth/infrastructure/session/auth-session.server";
+import { PERMISSIONS } from "~/modules/auth/domain/entities/permission";
+import { requirePermission } from "~/modules/auth/infrastructure/session/auth-session.server";
 import { withLocalePath } from "~/modules/localization/infrastructure/i18n/server-locale.server";
 import { makeCreateDepartmentUseCase } from "~/modules/department/department-module.server";
 import { NewDepartmentDialog } from "~/modules/department/presentation/pages/new-department-dialog";
@@ -12,12 +13,12 @@ type ActionData = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  await requireAuthenticatedUser(request);
+  await requirePermission(request, PERMISSIONS.DEPARTMENTS_CREATE);
   return null;
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  await requireAuthenticatedUser(request);
+  await requirePermission(request, PERMISSIONS.DEPARTMENTS_CREATE);
 
   try {
     const formData = await request.formData();

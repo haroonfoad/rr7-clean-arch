@@ -3,7 +3,8 @@ import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 
 import { OrganizationsPage } from "~/modules/organization/presentation/pages/organizations-page";
 import { makeListOrganizationsUseCase } from "~/modules/organization/organization-module.server";
-import { requireAuthenticatedUser } from "~/modules/auth/infrastructure/session/auth-session.server";
+import { PERMISSIONS } from "~/modules/auth/domain/entities/permission";
+import { requirePermission } from "~/modules/auth/infrastructure/session/auth-session.server";
 
 export const meta: MetaFunction = () => {
   return [
@@ -17,7 +18,7 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  await requireAuthenticatedUser(request);
+  await requirePermission(request, PERMISSIONS.ORGANIZATIONS_LIST);
   const organizations = await makeListOrganizationsUseCase().execute();
   return { organizations };
 }
