@@ -107,8 +107,11 @@ export function OrganizationsPage({
           ) : null}
 
           <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <span className="p-input-icon-left w-full sm:max-w-sm">
-              <i className="pi pi-search" />
+            <span className="relative w-full sm:max-w-sm">
+              <i
+                className="pi pi-search pointer-events-none absolute top-1/2 -translate-y-1/2 text-slate-500"
+                style={{ insetInlineEnd: "0.75rem" }}
+              />
               <InputText
                 value={search}
                 onChange={(event) => {
@@ -117,6 +120,7 @@ export function OrganizationsPage({
                 }}
                 placeholder={t("organizations.searchPlaceholder")}
                 className="w-full"
+                style={{ paddingInlineEnd: "2.25rem" }}
               />
             </span>
             <p className="text-xs text-slate-500">
