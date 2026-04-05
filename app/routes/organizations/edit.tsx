@@ -1,10 +1,6 @@
 import { data, redirect } from "react-router";
-import { Dialog } from "primereact/dialog";
-import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
 import type { ActionFunctionArgs } from "react-router";
 import {
-  Form,
   useActionData,
   useLoaderData,
   useNavigate,
@@ -15,6 +11,7 @@ import { requireAuthenticatedUser } from "~/modules/auth/infrastructure/session/
 import { withLocalePath } from "~/modules/localization/infrastructure/i18n/server-locale.server";
 import { makeUpdateOrganizationUseCase } from "~/modules/organization/organization-module.server";
 import { makeListOrganizationsUseCase } from "~/modules/organization/organization-module.server";
+import { EditOrganizationDialog } from "~/modules/organization/presentation/pages/edit-organization-dialog";
 
 type ActionData = {
   error?: string;
@@ -66,47 +63,12 @@ export default function OrganizationsEditRoute() {
   const { organization } = useLoaderData<typeof loader>();
 
   return (
-    <Dialog
-      header="Edit Organization"
-      visible
-      modal
-      style={{ width: "30rem" }}
-      onHide={() => navigate("..")}
-    >
-      <Form method="post" className="space-y-4">
-        <input type="hidden" name="id" value={organization.id} />
-
-        <div>
-          <label htmlFor="name" className="mb-2 block text-sm font-medium">
-            Organization Name
-          </label>
-          <InputText
-            id="name"
-            name="name"
-            className="w-full"
-            defaultValue={organization.name}
-            autoFocus
-          />
-        </div>
-
-        {actionData?.error ? (
-          <p className="text-sm text-red-700">{actionData.error}</p>
-        ) : null}
-
-        <div className="flex justify-end gap-2">
-          <Button
-            type="button"
-            label="Cancel"
-            text
-            onClick={() => navigate("..")}
-          />
-          <Button
-            type="submit"
-            label="Save"
-            loading={navigation.state === "submitting"}
-          />
-        </div>
-      </Form>
-    </Dialog>
+    <EditOrganizationDialog
+      organizationId={organization.id}
+      organizationName={organization.name}
+      submitting={navigation.state === "submitting"}
+      error={actionData?.error}
+      onCancel={() => navigate("..")}
+    />
   );
 }

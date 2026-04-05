@@ -1,13 +1,11 @@
 import { data, redirect } from "react-router";
-import { Dialog } from "primereact/dialog";
-import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
-import { Form, useActionData, useNavigate, useNavigation } from "react-router";
+import { useActionData, useNavigate, useNavigation } from "react-router";
 
 import { requireAuthenticatedUser } from "~/modules/auth/infrastructure/session/auth-session.server";
 import { withLocalePath } from "~/modules/localization/infrastructure/i18n/server-locale.server";
 import { makeCreateDepartmentUseCase } from "~/modules/department/department-module.server";
+import { NewDepartmentDialog } from "~/modules/department/presentation/pages/new-department-dialog";
 
 type ActionData = {
   error?: string;
@@ -52,39 +50,10 @@ export default function DepartmentsNewRoute() {
   const actionData = useActionData() as ActionData | undefined;
 
   return (
-    <Dialog
-      header="Add Department"
-      visible
-      modal
-      style={{ width: "30rem" }}
-      onHide={() => navigate("..")}
-    >
-      <Form method="post" className="space-y-4">
-        <div>
-          <label htmlFor="name" className="mb-2 block text-sm font-medium">
-            Department Name
-          </label>
-          <InputText id="name" name="name" className="w-full" autoFocus />
-        </div>
-
-        {actionData?.error ? (
-          <p className="text-sm text-red-700">{actionData.error}</p>
-        ) : null}
-
-        <div className="flex justify-end gap-2">
-          <Button
-            type="button"
-            label="Cancel"
-            text
-            onClick={() => navigate("..")}
-          />
-          <Button
-            type="submit"
-            label="Create"
-            loading={navigation.state === "submitting"}
-          />
-        </div>
-      </Form>
-    </Dialog>
+    <NewDepartmentDialog
+      submitting={navigation.state === "submitting"}
+      error={actionData?.error}
+      onCancel={() => navigate("..")}
+    />
   );
 }

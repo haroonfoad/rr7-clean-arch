@@ -1,13 +1,12 @@
 import { data, redirect } from "react-router";
-import { Dialog } from "primereact/dialog";
-import { Button } from "primereact/button";
 import type { ActionFunctionArgs } from "react-router";
-import { Form, useLoaderData, useNavigate, useNavigation } from "react-router";
+import { useLoaderData, useNavigate, useNavigation } from "react-router";
 
 import { requireAuthenticatedUser } from "~/modules/auth/infrastructure/session/auth-session.server";
 import { withLocalePath } from "~/modules/localization/infrastructure/i18n/server-locale.server";
 import { makeDeleteDepartmentUseCase } from "~/modules/department/department-module.server";
 import { makeListDepartmentsUseCase } from "~/modules/department/department-module.server";
+import { DeleteDepartmentDialog } from "~/modules/department/presentation/pages/delete-department-dialog";
 
 type ActionData = {
   error?: string;
@@ -55,33 +54,10 @@ export default function DepartmentsDeleteRoute() {
   const { department } = useLoaderData<typeof loader>();
 
   return (
-    <Dialog
-      header="Delete Department"
-      visible
-      modal
-      style={{ width: "30rem" }}
-      onHide={() => navigate("..")}
-    >
-      <Form method="post" className="space-y-4">
-        <p className="text-sm text-slate-700">
-          Are you sure you want to delete <strong>{department.name}</strong>?
-        </p>
-
-        <div className="flex justify-end gap-2">
-          <Button
-            type="button"
-            label="Cancel"
-            text
-            onClick={() => navigate("..")}
-          />
-          <Button
-            type="submit"
-            label="Delete"
-            severity="danger"
-            loading={navigation.state === "submitting"}
-          />
-        </div>
-      </Form>
-    </Dialog>
+    <DeleteDepartmentDialog
+      departmentName={department.name}
+      submitting={navigation.state === "submitting"}
+      onCancel={() => navigate("..")}
+    />
   );
 }

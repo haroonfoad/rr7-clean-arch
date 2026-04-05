@@ -1,10 +1,6 @@
 import { data, redirect } from "react-router";
-import { Dialog } from "primereact/dialog";
-import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
 import type { ActionFunctionArgs } from "react-router";
 import {
-  Form,
   useActionData,
   useLoaderData,
   useNavigate,
@@ -15,6 +11,7 @@ import { requireAuthenticatedUser } from "~/modules/auth/infrastructure/session/
 import { withLocalePath } from "~/modules/localization/infrastructure/i18n/server-locale.server";
 import { makeUpdateDepartmentUseCase } from "~/modules/department/department-module.server";
 import { makeListDepartmentsUseCase } from "~/modules/department/department-module.server";
+import { EditDepartmentDialog } from "~/modules/department/presentation/pages/edit-department-dialog";
 
 type ActionData = {
   error?: string;
@@ -66,47 +63,12 @@ export default function DepartmentsEditRoute() {
   const { department } = useLoaderData<typeof loader>();
 
   return (
-    <Dialog
-      header="Edit Department"
-      visible
-      modal
-      style={{ width: "30rem" }}
-      onHide={() => navigate("..")}
-    >
-      <Form method="post" className="space-y-4">
-        <input type="hidden" name="id" value={department.id} />
-
-        <div>
-          <label htmlFor="name" className="mb-2 block text-sm font-medium">
-            Department Name
-          </label>
-          <InputText
-            id="name"
-            name="name"
-            className="w-full"
-            defaultValue={department.name}
-            autoFocus
-          />
-        </div>
-
-        {actionData?.error ? (
-          <p className="text-sm text-red-700">{actionData.error}</p>
-        ) : null}
-
-        <div className="flex justify-end gap-2">
-          <Button
-            type="button"
-            label="Cancel"
-            text
-            onClick={() => navigate("..")}
-          />
-          <Button
-            type="submit"
-            label="Save"
-            loading={navigation.state === "submitting"}
-          />
-        </div>
-      </Form>
-    </Dialog>
+    <EditDepartmentDialog
+      departmentId={department.id}
+      departmentName={department.name}
+      submitting={navigation.state === "submitting"}
+      error={actionData?.error}
+      onCancel={() => navigate("..")}
+    />
   );
 }
