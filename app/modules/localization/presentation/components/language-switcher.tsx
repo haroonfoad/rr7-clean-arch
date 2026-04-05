@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from "react-router";
+import { Dropdown, type DropdownChangeEvent } from "primereact/dropdown";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -15,37 +16,36 @@ export function LanguageSwitcher({ locale }: LanguageSwitcherProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
+  const buildLocalizedHref = (nextLocale: AppLocale) => {
+    const segments = location.pathname.split("/").filter(Boolean);
+    const hasLocalePrefix = SUPPORTED_LOCALES.includes(
+      (segments[0] ?? "") as AppLocale,
+    );
+    const rest = hasLocalePrefix ? segments.slice(1) : segments;
+    const nextPath =
+      rest.length > 0 ? `/${nextLocale}/${rest.join("/")}` : `/${nextLocale}`;
+
+    return `${nextPath}${location.search}${location.hash}`;
+  };
+
   return (
     <div className="inline-flex items-center gap-2">
-      <label htmlFor="locale" className="text-xs text-slate-600">
+      <label htmlFor="locale" className="text-sm font-medium text-slate-600">
         {t("language.label")}
       </label>
-      <select
-        id="locale"
-        name="locale"
-        defaultValue={locale}
-        className="rounded border border-slate-300 bg-white px-2 py-1 text-sm"
-        onChange={(event) => {
-          const nextLocale = event.currentTarget.value as AppLocale;
-          const segments = location.pathname.split("/").filter(Boolean);
-          const hasLocalePrefix = SUPPORTED_LOCALES.includes(
-            (segments[0] ?? "") as AppLocale,
-          );
-          const rest = hasLocalePrefix ? segments.slice(1) : segments;
-          const nextPath =
-            rest.length > 0
-              ? `/${nextLocale}/${rest.join("/")}`
-              : `/${nextLocale}`;
-
-          navigate(`${nextPath}${location.search}${location.hash}`);
+      <Dropdown
+        inputId="locale"
+        value={locale}
+        options={SUPPORTED_LOCALES.map((candidate) => ({
+          label: candidate,
+          value: candidate,
+        }))}
+        onChange={(event: DropdownChangeEvent) => {
+          const nextLocale = event.value as AppLocale;
+          navigate(buildLocalizedHref(nextLocale));
         }}
-      >
-        {SUPPORTED_LOCALES.map((candidate) => (
-          <option key={candidate} value={candidate}>
-            {t(`language.${candidate}`)}
-          </option>
-        ))}
-      </select>
+        aria-label={t("language.label")}
+      />
     </div>
   );
 }
