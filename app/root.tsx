@@ -16,7 +16,7 @@ import { LocalizationProvider } from "./modules/localization/presentation/provid
 import "./app.css";
 import "primeicons/primeicons.css";
 import "primereact/resources/primereact.min.css";
-import "primereact/resources/themes/lara-light-blue/theme.css";
+import "primereact/resources/themes/lara-light-purple/theme.css";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const locale = await detectLocale(request);
