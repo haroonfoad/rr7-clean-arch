@@ -13,9 +13,17 @@ type OrganizationRow = Organization & { currentName: string };
 
 interface OrganizationsPageProps {
   organizations: Organization[];
+  canCreate: boolean;
+  canUpdate: boolean;
+  canDelete: boolean;
 }
 
-export function OrganizationsPage({ organizations }: OrganizationsPageProps) {
+export function OrganizationsPage({
+  organizations,
+  canCreate,
+  canUpdate,
+  canDelete,
+}: OrganizationsPageProps) {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [first, setFirst] = useState(0);
@@ -49,25 +57,29 @@ export function OrganizationsPage({ organizations }: OrganizationsPageProps) {
 
   const actionsBodyTemplate = (organization: OrganizationRow) => (
     <div className="flex gap-2 justify-end">
-      <Link to={`${organization.id}/edit`}>
-        <Button
-          type="button"
-          label={t("table.edit")}
-          icon="pi pi-pencil"
-          size="small"
-        />
-      </Link>
+      {canUpdate ? (
+        <Link to={`${organization.id}/edit`}>
+          <Button
+            type="button"
+            label={t("table.edit")}
+            icon="pi pi-pencil"
+            size="small"
+          />
+        </Link>
+      ) : null}
 
-      <Link to={`${organization.id}/delete`}>
-        <Button
-          type="button"
-          label={t("table.delete")}
-          icon="pi pi-trash"
-          size="small"
-          severity="danger"
-          outlined
-        />
-      </Link>
+      {canDelete ? (
+        <Link to={`${organization.id}/delete`}>
+          <Button
+            type="button"
+            label={t("table.delete")}
+            icon="pi pi-trash"
+            size="small"
+            severity="danger"
+            outlined
+          />
+        </Link>
+      ) : null}
     </div>
   );
 
@@ -82,15 +94,17 @@ export function OrganizationsPage({ organizations }: OrganizationsPageProps) {
             {t("organizations.description")}
           </p>
 
-          <div className="mb-6 flex justify-end">
-            <Link to="new">
-              <Button
-                type="button"
-                label={t("organizations.add")}
-                icon="pi pi-plus"
-              />
-            </Link>
-          </div>
+          {canCreate ? (
+            <div className="mb-6 flex justify-end">
+              <Link to="new">
+                <Button
+                  type="button"
+                  label={t("organizations.add")}
+                  icon="pi pi-plus"
+                />
+              </Link>
+            </div>
+          ) : null}
 
           <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <span className="p-input-icon-left w-full sm:max-w-sm">

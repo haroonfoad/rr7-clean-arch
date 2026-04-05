@@ -18,16 +18,25 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  await requirePermission(request, PERMISSIONS.ORGANIZATIONS_LIST);
+  const user = await requirePermission(request, PERMISSIONS.ORGANIZATIONS_LIST);
   const organizations = await makeListOrganizationsUseCase().execute();
-  return { organizations };
+  const canCreate = user.permissions.includes(PERMISSIONS.ORGANIZATIONS_CREATE);
+  const canUpdate = user.permissions.includes(PERMISSIONS.ORGANIZATIONS_UPDATE);
+  const canDelete = user.permissions.includes(PERMISSIONS.ORGANIZATIONS_DELETE);
+  return { organizations, canCreate, canUpdate, canDelete };
 }
 
 export default function OrganizationsRoute() {
-  const { organizations } = useLoaderData<typeof loader>();
+  const { organizations, canCreate, canUpdate, canDelete } =
+    useLoaderData<typeof loader>();
   return (
     <>
-      <OrganizationsPage organizations={organizations} />
+      <OrganizationsPage
+        organizations={organizations}
+        canCreate={canCreate}
+        canUpdate={canUpdate}
+        canDelete={canDelete}
+      />
       <Outlet />
     </>
   );
